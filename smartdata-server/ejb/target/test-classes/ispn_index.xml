@@ -1,0 +1,69 @@
+<infinispan
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:infinispan:config:5.0 http://www.infinispan.org/schemas/infinispan-config-5.0.xsd"
+                  xmlns="urn:infinispan:config:5.0">
+
+    <!-- *************************** -->
+    <!-- System-wide global settings -->
+    <!-- *************************** -->
+
+    <global>
+    	<!--asyncListenerExecutor factory="org.infinispan.executors.DefaultExecutorFactory">
+         <properties>
+            <property name="maxThreads" value="100"/>
+            <property name="threadNamePrefix" value="AsyncListenerThread"/>
+         </properties>
+	    </asyncListenerExecutor>
+	    
+      <asyncTransportExecutor factory="org.infinispan.executors.DefaultExecutorFactory">
+         <properties>
+            <property name="maxThreads" value="100"/>
+            <property name="threadNamePrefix" value="AsyncSerializationThread"/>
+         </properties>
+      </asyncTransportExecutor-->
+	    
+	    
+        <!-- If the transport is omitted, there is no way to create distributed or clustered
+             caches. There is no added cost to defining a transport but not creating a cache that uses one,
+             since the transport is created and initialized lazily. -->
+        <transport clusterName="nat_log_cluster" distributedSyncTimeout="20000">
+            <!-- Note that the JGroups transport uses sensible defaults if no configuration
+                 property is defined. See the JGroupsTransport javadocs for more flags -->
+                 <properties>
+                 	<property name="configurationFile" value="jgroups_smartdata.xml" />
+                 </properties>
+        </transport>
+    </global>
+    <default>
+        <!--clustering mode="local" /-->
+        <clustering mode="replication">
+            <stateRetrieval fetchInMemoryState="false" logFlushTimeout="30000" />
+            <sync />
+            <hash numOwners="1" />
+        </clustering>
+        <eviction strategy="FIFO" maxEntries="2000000" />
+        <!--eviction strategy="NONE" maxEntries="-1" /-->
+		  <indexing enabled="true" indexLocalOnly="true">
+	         <properties>
+	         	<property name="hibernate.search.default.directory_provider" value="ram" /> <!-- Use ram for lucene dir for testing -->
+	         	<!--property name="hibernate.search.default.indexwriter.use_compound_file" value="false" />
+	         	<property name="hibernate.search.default.indexwriter.merge_factor" value="30" />
+	         	<property name="hibernate.search.default.sharding_strategy.nbr_of_shards" value="8" />
+	         	<property name="hibernate.search.default.indexwriter.ram_buffer_size" value="200" />
+	         	<property name="hibernate.search.default.indexmanager" value="near-real-time" /-->
+	         	<property name="hibernate.search.lucene_version" value="LUCENE_CURRENT" />
+	            <!--property name="hibernate.search.default.directory_provider" value="infinispan" />
+	            <property name="hibernate.search.infinispan.configuration_resourcename" value="ispn_index_lucene.xml" />
+	            <property name="hibernate.search.infinispan.locking_cachename" value="LuceneIndexesLocking" />
+	            <property name="hibernate.search.infinispan.data_cachename" value="LuceneIndexesData" />
+	            <property name="hibernate.search.infinispan.metadata_cachename" value="LuceneIndexesMetadata" /-->
+	         </properties>
+	      </indexing>
+    </default>
+
+    <namedCache name="searchResultsCache">
+        <clustering mode="local" />
+        <eviction strategy="LIRS" maxEntries="1000" />
+    </namedCache>
+    
+</infinispan>
