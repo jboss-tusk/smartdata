@@ -9,10 +9,12 @@ In jdgconsume mode there is a C++ consumer that reads messages from the MRGM que
 
 In JDG-only mode the jdgconsume process is not run. Instead, the JDG nodes themselves consume messages off of the MRGM queue. This should be done when the data items are batched into large (ie 50MB) MRGM messages. 
 
+The JDG nodes have been tested to run on JBoss EAP 6.0.1.
+
 The projects are as follows:
 * smartdata-client	this is a java program that accepts messages, buffers them, then dispatches them to the JDG cluster
 * smartdata-server	this is the code used to run the JDG nodes; it handles indexing and storage of JDG data, as well as searches
-* eap6				these are the custom configuration files used in JBoss EAP6, which is the container for the smartdata-server deployable
+* eap6				these are the custom configuration files used in JBoss EAP6, which is the container for the smartdata-server deployable. There is a 'jboss' application user created with password 'password' and role 'guest'.
 * mrgm				this contains the C++ MRGM consumer, which hands incoming messages off to the JDG cluster via JNI and the smartdata-client
 
 How to Build and Deploy:
