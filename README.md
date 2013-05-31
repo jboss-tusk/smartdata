@@ -31,19 +31,19 @@ There is also a sample Maven settings.xml file in the top level directory that c
 In order to compile the mrgm project on the server, that server must have MRGM installed and various configurations done, as follows:
 
 * Register the RHEL server. For example, use rhn_register:
-    [RedHatNetworkUserName]/[RedHatNetworkPassword]
-    Check on all available updates
-    enter unique profile name
+    - [RedHatNetworkUserName]/[RedHatNetworkPassword]
+    - Check on all available updates
+    - enter unique profile name
 * Go to RedHatNetwork and add channels to the system
-    https://rhn.redhat.com/rhn/systems/SystemList.do -> click on system -> Alter Channel Subscriptions
-    Additional Services Channels for Red Hat Enterprise Linux 6 / MRG Messaging v.2
-    Release Channels for Red Hat Enterprise Linux 6 /  RHEL Server High Availability
+    + https://rhn.redhat.com/rhn/systems/SystemList.do -> click on system -> Alter Channel Subscriptions
+    + Additional Services Channels for Red Hat Enterprise Linux 6 / MRG Messaging v.2
+    + Release Channels for Red Hat Enterprise Linux 6 /  RHEL Server High Availability
 * Yum installs
-    yum -y groupinstall "Messaging Client Support"
-    yum -y groupinstall "MRG Messaging"
-    yum -y install qpid-cpp-server-cluster
-    yum -y groupinstall "development tools"
-    yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel
+    * yum -y groupinstall "Messaging Client Support"
+    * yum -y groupinstall "MRG Messaging"
+    * yum -y install qpid-cpp-server-cluster
+    * yum -y groupinstall "development tools"
+    * yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel
 * MRG-M Setup
     service qpidd start
     Add to bash profile or startup script: export LD_LIBRARY_PATH=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server
