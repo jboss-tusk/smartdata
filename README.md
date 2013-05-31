@@ -1,4 +1,4 @@
-smartdata
+Red Hat Smart Data Reference Architecture
 =========
 
 This is the source code for the Smart Data solution reference architecture. It is an integration of various Red Hat and JBoss technologies with some big data technologies to address common big data integration use cases.
@@ -33,13 +33,13 @@ There is a sample Maven settings.xml file in the top level directory that can be
 ------------------
 
 The Smart Data code running within EAP6 server can be configured at runtime via system properties, as seen in the jdg-start-qmqp.sh file and as listed below:
-* __-b <ip_address_of_vm>__: this must be an IP address that is used by a valid interface
-* __-Djgroups.bind_addr=<ip_address_of_vm>__: this must be an IP address that is used by a valid interface
+* __-b [ip_address_of_vm]__: this must be an IP address that is used by a valid interface
+* __-Djgroups.bind_addr=[ip_address_of_vm]__: this must be an IP address that is used by a valid interface
 * __--server-config=standalone-full-amqp.xml__: use this to change to a different EAP configuration file
-* __-Ddomain=<payload_domain>__: which data payload type to use (ie which use case we are running under); valid values are 'cable' and 'cgnat'; TODO need to check whether this is still supported
-* __-Dcacheditemhelper=<full_classname_of_cacheditem_helper>__: the full class name, with package, of the CachedItemHelper for the data payload type that is to be used; see CachedItemHelperFactory.java for more information; current valid values are org.jboss.tusk.smartdata.domain.cable.STBLogHelper and org.jboss.tusk.smartdata.domain.cgnat.NATLogHelper
-* __-Dparsetype=<type>__: how to treat Strings containing incoming data (ie how to parse them); the default value depends on the CachedItemHelper implementation; see STBLogHelper.java and NATLogHelper.java
-* __-DsearchResultCacheTimeout__: time, in ms, that each search's results are cached in memory; default timeout is 60,000 ms
+* __-Ddomain=[payload_domain]__: which data payload type to use (ie which use case we are running under); valid values are 'cable' and 'cgnat'; TODO need to check whether this is still supported
+* __-Dcacheditemhelper=[full_classname_of_cacheditem_helper]__: the full class name, with package, of the CachedItemHelper for the data payload type that is to be used; see CachedItemHelperFactory.java for more information; current valid values are org.jboss.tusk.smartdata.domain.cable.STBLogHelper and org.jboss.tusk.smartdata.domain.cgnat.NATLogHelper
+* __-Dparsetype=[type]__: how to treat Strings containing incoming data (ie how to parse them); the default value depends on the CachedItemHelper implementation; see STBLogHelper.java and NATLogHelper.java
+* __-DsearchResultCacheTimeout=[time_in_ms]__: time, in ms, that each search's results are cached in memory; default timeout is 60,000 ms
 
 ------------------
 
