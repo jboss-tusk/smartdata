@@ -12,9 +12,6 @@ import org.jboss.tusk.smartdata.data.ParserTuple;
 /**
  * Container for set top box log messages to be stored in the data grid.
  * 
- * TODO add the fields that need to be stored in the data grid, marking the
- * ones that needs to be indexed as well.
- * 
  * @author justin
  *
  */
