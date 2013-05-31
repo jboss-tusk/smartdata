@@ -71,7 +71,7 @@ To add support for a new use case (ie new data payload), do the following:
 
 Below is a list of several of the main classes, including the purpose they serve. There are other classes and files in the different modules/directories, but they are not currently used for the demos we support.
 
-smartdata-ejb module
+##smartdata-ejb module
 * __CachedItem.java__ - abstract superclass that all data payload objects for specific use cases should extend; these are what's added to the JDG cache
 * __CachedItemHelper.java__ - interface for the helper class that the core framework uses to work with the actual data payload objects
 * __CachedItemHelperFactory.java__ - factory class that the core framework uses to get CachedItemHelpers; uses the cacheditemhelper system property to decide which data payload type to use at runtime
@@ -87,7 +87,7 @@ smartdata-ejb module
 * __ispn_index_lucene.xml__ - configuration for the lucene JDG caches in the event that the lucen index is stored in JDG
 * __jgroups_smartdata.xml__ - jgroups configuration for clustering
 
-smartdata-web module
+##smartdata-web module
 * __Search.java__ - JAX-RS implementation for the search REST service; parses to/from JSON
 * __SearchService.java__ - bridge between the Search rest service implementation and the Searcher EJB, which does the actual searches
 * __Ingest.java__ - JAX-RS implementation for the ingest REST service; parses to/from JSON
@@ -119,11 +119,11 @@ mrgm directory
 ------------------
 
 Below is a list of outstanding TODOs for this project, in order of priority as of 5/31/2013:
-1. Make sure that we are using the latest Infinishap and hibernate-search libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
-2. Test MapReduce with the new code organization.
-3. Figure out why searches take so long when it's the first search (or first search in a while) whereas subsequent searches are faster
-4. Test with larger maxEntries sizes (in ispn_index.xml) to see how many entries we can support (which will be different for different payload types)
-5. Figure out how to use off-heap memory to increase the total amount of memory available and prevent long garbage collection pauses from large heap sizes
-6. Once RHS and Hadoop are integrated, create some MapReduce (and Hive or Pig?) code to demonstrate usage of Hadoop for analytics and other processing
+* Make sure that we are using the latest Infinishap and hibernate-search libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
+* Test MapReduce with the new code organization.
+* Figure out why searches take so long when it's the first search (or first search in a while) whereas subsequent searches are faster
+* Test with larger maxEntries sizes (in ispn_index.xml) to see how many entries we can support (which will be different for different payload types)
+* Figure out how to use off-heap memory to increase the total amount of memory available and prevent long garbage collection pauses from large heap sizes
+* Once RHS and Hadoop are integrated, create some MapReduce (and Hive or Pig?) code to demonstrate usage of Hadoop for analytics and other processing
 
 
