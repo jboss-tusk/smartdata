@@ -118,6 +118,8 @@ Below is a list of several of the main classes, including the purpose they serve
 
 ------------------
 
+###TODOs
+
 Below is a list of outstanding TODOs for this project, in order of priority as of 5/31/2013:
 * Make sure that we are using the latest Infinishap and hibernate-search libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
 * Test MapReduce with the new code organization.
