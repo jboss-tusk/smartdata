@@ -72,7 +72,7 @@ To add support for a new use case (ie new data payload), do the following:
 Below is a list of several of the main classes, including the purpose they serve. There are other classes and files in the different modules/directories, but they are not currently used for the demos we support.
 
 smartdata-ejb module
-* CachedItem.java - abstract superclass that all data payload objects for specific use cases should extend; these are what's added to the JDG cache
+* __CachedItem.java__ - abstract superclass that all data payload objects for specific use cases should extend; these are what's added to the JDG cache
 * CachedItemHelper.java - interface for the helper class that the core framework uses to work with the actual data payload objects
 * CachedItemHelperFactory.java - factory class that the core framework uses to get CachedItemHelpers; uses the cacheditemhelper system property to decide which data payload type to use at runtime
 * DistributedSearch.java - Callable implementation that is used for distributed searches
