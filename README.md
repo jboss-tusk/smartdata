@@ -101,7 +101,7 @@ Steps to add support for a new use case (ie new data payload):
 
 Below is a list of several of the main classes, including the purpose they serve. There are other classes and files in the different modules/directories, but they are not currently used for the demos we support.
 
-###smartdata-ejb module
+####smartdata-ejb module
 * __CachedItem.java__ - abstract superclass that all data payload objects for specific use cases should extend; these are what's added to the JDG cache
 * __CachedItemHelper.java__ - interface for the helper class that the core framework uses to work with the actual data payload objects
 * __CachedItemHelperFactory.java__ - factory class that the core framework uses to get CachedItemHelpers; uses the cacheditemhelper system property to decide which data payload type to use at runtime
@@ -117,21 +117,21 @@ Below is a list of several of the main classes, including the purpose they serve
 * __ispn_index_lucene.xml__ - configuration for the lucene JDG caches in the event that the lucen index is stored in JDG
 * __jgroups_smartdata.xml__ - jgroups configuration for clustering
 
-###smartdata-web module
+####smartdata-web module
 * __Search.java__ - JAX-RS implementation for the search REST service; parses to/from JSON
 * __SearchService.java__ - bridge between the Search rest service implementation and the Searcher EJB, which does the actual searches
 * __Ingest.java__ - JAX-RS implementation for the ingest REST service; parses to/from JSON
 * __IngestService.java__ - bridge between the Ingest rest service implementation and the IngestHelper class, which does the actual ingests
 
-###cable module
+####cable module
 * __STBLog.java__ - data payload implementation for the cable Set Top Box (STB) use case; represents data sent from a cable box to a central system for storage/search
 * __STBLogHelper.java__ - helper implementation for the cable Set Top Box use case
 
-###cgnat module
+####cgnat module
 * __NATLog.java__ - data payload implementation for the carrier grade network address translation (CGNAT) use case; represents a single network address translation (NAT) log file
 * __NATLogHelper.java__ - helper implementation for the carrier grade NAT use case
 
-###eap6 directory
+####eap6 directory
 * __jdg-start-qmqp.sh__ - start script for EAP6 when running in a setup where the IngesterMDB consumes messages directly off of the AMQP queue; the IP address must match a valid IP address on the server on which it is running
 * __jdg-stop.sh__ - stop script for EAP6
 * __standalone.conf__ - startup options for the JVM on which EAP6 is running
@@ -139,7 +139,7 @@ Below is a list of several of the main classes, including the purpose they serve
 * __standalone-full-amqp.xml__ - EAP6 standalone configuration file; contains configuration for the qpid (AMQP) resource adapter, the AMQP queues, and other items
 * __qpid-ra-0.18.rar__ - the qpid resource adapter to be able to consume messages from the amqp queue
 
-###mrgm directory
+####mrgm directory
 * __jdgconsume.cpp__ - the C++ program that consumes messages off of the QMP queue (if running in jdgconsume mode), buffering and subsequently dispatching them to the JDG nodes via a JMS queue or directly via a remote EJB reference
 * __8nodejdg.properties__ - properties file to be used when there is an 8 node JDG cluster
 * __count.sh__ - helper script to see how many items have been added to each JDG node
@@ -148,7 +148,7 @@ Below is a list of several of the main classes, including the purpose they serve
 
 ------------------
 
-###TODOs
+####TODOs
 
 Below is a list of outstanding TODOs for this project, in order of priority as of 5/31/2013:
 * Make sure that we are using the latest Infinishap and hibernate-search libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
