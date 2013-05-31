@@ -1,6 +1,6 @@
 How to Start JDGConsume
 
-The JDG consumer program is run on cirries-2002. It requires the target directory to be there. This directory, which is created during the build of the jdg project, should be copied from the smartdata-client/ directory.
+The JDG consumer program is run on cirries-2002.
 
 ---Startup Command---
 >cd /root/juniper/mrgm

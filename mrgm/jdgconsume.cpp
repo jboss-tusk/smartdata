@@ -65,7 +65,7 @@ public:
     numReceivers = 1;
     headers = 0;
     tcpNoDelay = true;
-    jdgProps = "smartdata-cllient.properties";
+    jdgProps = "smartdata-client.properties";
     queueName = "intakequeue";
     desc.add_options()
       ("help", "this help message")
@@ -123,7 +123,7 @@ public:
 Base::Base(int index, Options& options, Connection& connection) : index(index), options(options), connection(connection), total(0) {
   srand(time(NULL));
   for(int j=0; j < numRandomMessages; j++) {
-    string content = "{\"time\":\"2012-11-10 00:47:01\",\"type\":\"c\",\"app\":\"any\",\"orig\":\"ge-1/0/0.120\"";
+    string content = "{\"key\":123456789,\"time\":\"2012-11-10 00:47:01\",\"type\":\"c\",\"app\":\"any\",\"orig\":\"ge-1/0/0.120\"";
     content += ",\"origIp\":\"192.168." + boost::lexical_cast<string>(rand() % 256) + "." + boost::lexical_cast<string>(rand() % 256) + "\"";
     //content += ",\"origPort\":\"" + boost::lexical_cast<string>(rand() % 10 + 10000) + "\"";
     content += ",\"origPort\":" + boost::lexical_cast<string>(rand() % 10 + 10000) + "";
