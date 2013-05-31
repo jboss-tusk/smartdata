@@ -73,57 +73,57 @@ Below is a list of several of the main classes, including the purpose they serve
 
 smartdata-ejb module
 * __CachedItem.java__ - abstract superclass that all data payload objects for specific use cases should extend; these are what's added to the JDG cache
-* CachedItemHelper.java - interface for the helper class that the core framework uses to work with the actual data payload objects
-* CachedItemHelperFactory.java - factory class that the core framework uses to get CachedItemHelpers; uses the cacheditemhelper system property to decide which data payload type to use at runtime
-* DistributedSearch.java - Callable implementation that is used for distributed searches
-* IngesterMDB.java - message driven bean that listens on a queue for messages with data payload(s) to ingest; the queue (destination) used in the class annotation must match a queue defined in the standalone-full-amqp.xml EAP6 file 
-* IngesterHelper.java - helper class that handles the actual work for ingesting data payload(s)
-* RemoteSearcher.java/SearcherEJB.java - EJB that is used to do local and distributed searches, as well as MapReduce jobs, against the JDG cache
-* StartupBean.java - instantiated during EAP6 startup to initialize the JDG cache(s), getting them to go ahead and form the clusters so processing can start immediately once the app is started up
-* InfinispanService.java - facade to the JDG (Infinispan) api; used for configuring caches, writing/loading values, doing searches, and starting MapReduce jobs
-* CachedItemSearchMapper.java - mapper implementation for the MapReduce engine
-* CachedItemSearchReducer.java - reducer implementation for the MapReduce engine
-* ispn_index.xml - configuration for the JDG caches
-* ispn_index_lucene.xml - configuration for the lucene JDG caches in the event that the lucen index is stored in JDG
-* jgroups_smartdata.xml - jgroups configuration for clustering
+* __CachedItemHelper.java__ - interface for the helper class that the core framework uses to work with the actual data payload objects
+* __CachedItemHelperFactory.java__ - factory class that the core framework uses to get CachedItemHelpers; uses the cacheditemhelper system property to decide which data payload type to use at runtime
+* __DistributedSearch.java__ - Callable implementation that is used for distributed searches
+* __IngesterMDB.java__ - message driven bean that listens on a queue for messages with data payload(s) to ingest; the queue (destination) used in the class annotation must match a queue defined in the standalone-full-amqp.xml EAP6 file 
+* __IngesterHelper.java__ - helper class that handles the actual work for ingesting data payload(s)
+* __RemoteSearcher.java/SearcherEJB.java__ - EJB that is used to do local and distributed searches, as well as MapReduce jobs, against the JDG cache
+* __StartupBean.java__ - instantiated during EAP6 startup to initialize the JDG cache(s), getting them to go ahead and form the clusters so processing can start immediately once the app is started up
+* __InfinispanService.java__ - facade to the JDG (Infinispan) api; used for configuring caches, writing/loading values, doing searches, and starting MapReduce jobs
+* __CachedItemSearchMapper.java__ - mapper implementation for the MapReduce engine
+* __CachedItemSearchReducer.java__ - reducer implementation for the MapReduce engine
+* __ispn_index.xml__ - configuration for the JDG caches
+* __ispn_index_lucene.xml__ - configuration for the lucene JDG caches in the event that the lucen index is stored in JDG
+* __jgroups_smartdata.xml__ - jgroups configuration for clustering
 
 smartdata-web module
-* Search.java - JAX-RS implementation for the search REST service; parses to/from JSON
-* SearchService.java - bridge between the Search rest service implementation and the Searcher EJB, which does the actual searches
-* Ingest.java - JAX-RS implementation for the ingest REST service; parses to/from JSON
-* IngestService.java - bridge between the Ingest rest service implementation and the IngestHelper class, which does the actual ingests
+* __Search.java__ - JAX-RS implementation for the search REST service; parses to/from JSON
+* __SearchService.java__ - bridge between the Search rest service implementation and the Searcher EJB, which does the actual searches
+* __Ingest.java__ - JAX-RS implementation for the ingest REST service; parses to/from JSON
+* __IngestService.java__ - bridge between the Ingest rest service implementation and the IngestHelper class, which does the actual ingests
 
 cable module
-* STBLog.java - data payload implementation for the cable Set Top Box (STB) use case; represents data sent from a cable box to a central system for storage/search
-* STBLogHelper.java - helper implementation for the cable Set Top Box use case
+* __STBLog.java__ - data payload implementation for the cable Set Top Box (STB) use case; represents data sent from a cable box to a central system for storage/search
+* __STBLogHelper.java__ - helper implementation for the cable Set Top Box use case
 
 cgnat module
-* NATLog.java - data payload implementation for the carrier grade network address translation (CGNAT) use case; represents a single network address translation (NAT) log file
-* NATLogHelper.java - helper implementation for the carrier grade NAT use case
+* __NATLog.java__ - data payload implementation for the carrier grade network address translation (CGNAT) use case; represents a single network address translation (NAT) log file
+* __NATLogHelper.java__ - helper implementation for the carrier grade NAT use case
 
 eap6 directory
-* jdg-start-qmqp.sh - start script for EAP6 when running in a setup where the IngesterMDB consumes messages directly off of the AMQP queue; the IP address must match a valid IP address on the server on which it is running
-* jdg-stop.sh - stop script for EAP6
-* standalone.conf - startup options for the JVM on which EAP6 is running
-* application-users.properties/application-roles.properties - contains an application user, required by the code; its username is 'jboss' and its password is 'password', role 'guest'
-* standalone-full-amqp.xml - EAP6 standalone configuration file; contains configuration for the qpid (AMQP) resource adapter, the AMQP queues, and other items
-* qpid-ra-0.18.rar - the qpid resource adapter to be able to consume messages from the amqp queue
+* __jdg-start-qmqp.sh__ - start script for EAP6 when running in a setup where the IngesterMDB consumes messages directly off of the AMQP queue; the IP address must match a valid IP address on the server on which it is running
+* __jdg-stop.sh__ - stop script for EAP6
+* __standalone.conf__ - startup options for the JVM on which EAP6 is running
+* __application-users.properties/application-roles.properties__ - contains an application user, required by the code; its username is 'jboss' and its password is 'password', role 'guest'
+* __standalone-full-amqp.xml__ - EAP6 standalone configuration file; contains configuration for the qpid (AMQP) resource adapter, the AMQP queues, and other items
+* __qpid-ra-0.18.rar__ - the qpid resource adapter to be able to consume messages from the amqp queue
 
 mrgm directory
-* jdgconsume.cpp - the C++ program that consumes messages off of the QMP queue (if running in jdgconsume mode), buffering and subsequently dispatching them to the JDG nodes via a JMS queue or directly via a remote EJB reference
-* 8nodejdg.properties - properties file to be used when there is an 8 node JDG cluster
-* count.sh - helper script to see how many items have been added to each JDG node
-* poll-intake-queue.sh/poll-jdg-queue.sh - command that shows the statistics for specific AMQP queues, which are executed in a never-ending loop
-* scp.sh - script to copy the smartdata-ear.ear file to all JDG nodes
+* __jdgconsume.cpp__ - the C++ program that consumes messages off of the QMP queue (if running in jdgconsume mode), buffering and subsequently dispatching them to the JDG nodes via a JMS queue or directly via a remote EJB reference
+* __8nodejdg.properties__ - properties file to be used when there is an 8 node JDG cluster
+* __count.sh__ - helper script to see how many items have been added to each JDG node
+* __poll-intake-queue.sh/poll-jdg-queue.sh__ - command that shows the statistics for specific AMQP queues, which are executed in a never-ending loop
+* __scp.sh__ - script to copy the smartdata-ear.ear file to all JDG nodes
 
 ------------------
 
 Below is a list of outstanding TODOs for this project, in order of priority as of 5/31/2013:
-* Make sure that we are using the latest Infinishap and hibernate-search libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
-* Test MapReduce with the new code organization.
-* Figure out why searches take so long when it's the first search (or first search in a while) whereas subsequent searches are faster
-* Test with larger maxEntries sizes (in ispn_index.xml) to see how many entries we can support (which will be different for different payload types)
-* Figure out how to use off-heap memory to increase the total amount of memory available and prevent long garbage collection pauses from large heap sizes
-* Once RHS and Hadoop are integrated, create some MapReduce (and Hive or Pig?) code to demonstrate usage of Hadoop for analytics and other processing
+1. Make sure that we are using the latest Infinishap and hibernate-search libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
+2. Test MapReduce with the new code organization.
+3. Figure out why searches take so long when it's the first search (or first search in a while) whereas subsequent searches are faster
+4. Test with larger maxEntries sizes (in ispn_index.xml) to see how many entries we can support (which will be different for different payload types)
+5. Figure out how to use off-heap memory to increase the total amount of memory available and prevent long garbage collection pauses from large heap sizes
+6. Once RHS and Hadoop are integrated, create some MapReduce (and Hive or Pig?) code to demonstrate usage of Hadoop for analytics and other processing
 
 
