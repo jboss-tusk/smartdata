@@ -122,6 +122,8 @@ public:
 
 Base::Base(int index, Options& options, Connection& connection) : index(index), options(options), connection(connection), total(0) {
   srand(time(NULL));
+  
+  //this creates an array of messages with dummy data
   for(int j=0; j < numRandomMessages; j++) {
     string content = "{\"key\":123456789,\"time\":\"2012-11-10 00:47:01\",\"type\":\"c\",\"app\":\"any\",\"orig\":\"ge-1/0/0.120\"";
     content += ",\"origIp\":\"192.168." + boost::lexical_cast<string>(rand() % 256) + "." + boost::lexical_cast<string>(rand() % 256) + "\"";
@@ -180,6 +182,7 @@ public:
   void run();
 };
 
+//Produces messages to the queue
 void Producer::run() {
   //string queueName = "my-queue" + lexical_cast<string>(index);
   string queueName = options.queueName;
@@ -218,6 +221,7 @@ public:
   void writeToISPN(std::string str);
 };
 
+//Consumes messages from the queue, handing them off to an InfinispanWriter class to buffer them and dispatch them to the JDG cluster
 void Consumer::run() {
   //string queueName = "my-queue" + lexical_cast<string>(index) + "; {create:always, delete:never}";
   string queueName = options.queueName;
@@ -341,6 +345,7 @@ void Consumer::run() {
       cout << "First message received" << endl;
     }
 
+	//Output a message after a given number of messages to give a status on how many messages we have consumed
     //if(i % 10000 == 0) {
     //  cout << i << ". val=" << message.getContent() << endl;
     //}
@@ -350,6 +355,7 @@ void Consumer::run() {
     jstring jstr = env->NewStringUTF(message.getContent().c_str());
     int result = env->CallStaticIntMethod(cls, mid, jstr);
     //cout << "Got result " << result << endl;
+	
     //how many additional times to write this message for ingest; just for testing to increase data load
     /*int multiplier = 1;
     for(int j=1; j < multiplier; j++) {
@@ -411,26 +417,6 @@ int main(int argc, char** argv) {
   ptr_vector<Thread> threads;
   ptr_vector<Producer> producers;
   ptr_vector<Consumer> consumers;
-
-  //make random messages
-  /*srand(time(NULL));
-  Message messages[100];
-  for(int j=0; j < 100; j++) {
-    string content = "{\"time\":\"2012-11-10 00:47:01\",\"type\":\"c\",\"app\":\"any\",\"orig\":\"ge-1/0/0.120\"";
-    content += ",\"origIp\":\"192.168.0." + boost::lexical_cast<string>(rand() % 256) + "\"";
-    content += ",\"origPort\":\"" + boost::lexical_cast<string>(rand() % 10 + 10000) + "\"";
-    content += ",\"destIp\":\"192.168.0." + boost::lexical_cast<string>(rand() % 256) + "\"";
-    content += ",\"destPort\":\"" + boost::lexical_cast<string>(rand() % 10 + 10100) + "\"";
-    content += ",\"transIp\":\"192.168.0." + boost::lexical_cast<string>(rand() % 256) + "\"";
-    content += ",\"transPort\":\"" + boost::lexical_cast<string>(rand() % 10 + 10200) + "\"}";
-
-    Message message = Message(content);
-    for (int i = 0; i < options.headers; i++) {
-      message.getProperties()["header" + lexical_cast<string>(i)] = "value" + lexical_cast<string>(i);
-    }
-
-    messages[j] = message;
-  }*/
 
   cout << "SendOnly=" << options.sendOnly << endl;
   cout << "ReceiveOnly=" << options.receiveOnly << endl;
