@@ -11,20 +11,49 @@ In JDG-only mode the jdgconsume process is not run. Instead, the JDG nodes thems
 
 The JDG nodes have been tested to run on JBoss EAP 6.0.1.
 
-The projects are as follows:
+The top-level projects are as follows:
 * smartdata-client	this is a java program that accepts messages, buffers them, then dispatches them to the JDG cluster
 * smartdata-server	this is the code used to run the JDG nodes; it handles indexing and storage of JDG data, as well as searches
 * eap6				these are the custom configuration files used in JBoss EAP6, which is the container for the smartdata-server deployable. There is a 'jboss' application user created with password 'password' and role 'guest'.
 * mrgm				this contains the C++ MRGM consumer, which hands incoming messages off to the JDG cluster via JNI and the smartdata-client
 
-How to Build and Deploy:
+------------------
+
+Steps to Build and Deploy:
 The Maven pom.xml file in the top directory is used to build the smartdata-client and smartdata-server projects. This results in the following deployables:
 * smartdata-client	the entire smartdata-client/target directory is copied into the mrgm directory on the server
-* smartdata-server	the smartdata-server/ear/target/smartdata-ear.ear file is copied into the $JOSS_HOME/standalone/deployments directory on the server
-* eap6				this project does not need to be built; its files are copied into the appropriate places in the $JOSS_HOME directory on the server
+* smartdata-server	the smartdata-server/ear/target/smartdata-ear.ear file is copied into the $JBOSS_ROOT/jboss-eap-6.0/standalone/deployments directory on the each JDG node
+* eap6				this project does not need to be built; its files are copied into the appropriate places in the $JBOSS_ROOT directory on the JDG node
 * mrgm				this project can only be built on the server; the entire directory is copied to the server; this assumes that it is running on the same server as the MRGM broker
 
-There is also a sample Maven settings.xml file in the top level directory that can be used to build the projects. 
+Note that multiple JDG nodes (ie separate EAP6 processes) can be run at one time on a single VM. This is done by installing EAP6 in multiple directories and changing the jboss.socket.binding.port-offset value at the bottom of each installation's configuration/standalone-full-amqp.xml file.
+
+There is a sample Maven settings.xml file in the top level directory that can be used to build the projects. 
+
+------------------
+
+The Smart Data code running within EAP6 server can be configured at runtime via system properties, as seen in the jdg-start-qmqp.sh file and as listed below:
+* __-b <ip_address_of_vm>__: this must be an IP address that is used by a valid interface
+* __-Djgroups.bind_addr=<ip_address_of_vm>__: this must be an IP address that is used by a valid interface
+* __--server-config=standalone-full-amqp.xml__: use this to change to a different EAP configuration file
+* __-Ddomain=<payload_domain>__: which data payload type to use (ie which use case we are running under); valid values are 'cable' and 'cgnat'; TODO need to check whether this is still supported
+* __-Dcacheditemhelper=<full_classname_of_cacheditem_helper>__: the full class name, with package, of the CachedItemHelper for the data payload type that is to be used; see CachedItemHelperFactory.java for more information; current valid values are org.jboss.tusk.smartdata.domain.cable.STBLogHelper and org.jboss.tusk.smartdata.domain.cgnat.NATLogHelper
+* __-Dparsetype=<type>__: how to treat Strings containing incoming data (ie how to parse them); the default value depends on the CachedItemHelper implementation; see STBLogHelper.java and NATLogHelper.java
+* __-DsearchResultCacheTimeout__: time, in ms, that each search's results are cached in memory; default timeout is 60,000 ms
+
+------------------
+
+Steps to Configure a Pristine EAP6.0.1 to be able to Run smartdata-server Code:
+
+1. Download a copy of EAP 6.0.1 (jboss-eap-6.0.1.zip) from the Red Hat Customer Access Portal.
+2. Unzip it into a directory, referred to as $JBOSS_ROOT.
+3. Copy the contents of the eap6 directory into their corresponding locations within $JBOSS_ROOT/jboss-eap-6.0/.
+4. Update the $JBOSS_ROOT/jboss-eap-6.0/bin/jdg-start-amqp.sh and .../jdg-stop.sh files to use the appropriate IP address and management port (which will change from the default 9999 if running multiple EAP6 processes on a single VM, each using a different set of ports).
+5. Update the $JBOSS_ROOT/jboss-eap-6.0/bin/standalone.conf file to tune the JVM appropriately (ie for heap size, garbage collection, etc).
+6. Update the $JBOSS_ROOT/jboss-eap-6.0/standalone/configuration/standalone-full-amqp.xml file to change the AMQP host address and queue names in the QPID resource-adapter.
+7. Make sure that UDP multicast is enabled on all VMs that will be running the JDG nodes in EAP6.
+8. Deploy the latest smartdata-ear.ear file to the $JBOSS_ROOT/jboss-eap-6.0/standalone/deployments directory.
+9. Run the $JBOSS_ROOT/jboss-eap-6.0/bin/jdg-start-amqp.sh script to start that node.
 
 ------------------
 
@@ -59,13 +88,13 @@ In order to compile the mrgm project on the server, that server must have MRGM i
 
 ------------------
 
-To add support for a new use case (ie new data payload), do the following:
-1. Create a new module under smartdata-server to house the implementation classes for the new use case. Use the "cable" module as a basis.
-2. Update the smartdata-server's pom.xml to add a reference to the new module. 
-3. Update the smartdata-ear's pom.xml to add a dependency to your new module.
-4. Provide custom subclass for CachedItem (use STBLog as an example). This include the fields to be stored/indexed in JDG, methods to parse input strings to create new objects, methods used in MapReduce jobs, etc. 
-5. Provide custom implementation for CachedItemHelper (see STBLogHelper as an example). This is used to parse multiple CachedItems, provide info for the JDG searches, and generally help with usage of the corresponding CachedItem. These help keep the core system (smartdata-ejb) implementation independent.
-6. Be sure to add a unit test for the CachedItem subclass.
+Steps to add support for a new use case (ie new data payload):
+* 1. Create a new module under smartdata-server to house the implementation classes for the new use case. Use the "cable" module as a basis.
+* 2. Update the smartdata-server's pom.xml to add a reference to the new module. 
+* 3. Update the smartdata-ear's pom.xml to add a dependency to your new module.
+* 4. Provide custom subclass for CachedItem (use STBLog as an example). This include the fields to be stored/indexed in JDG, methods to parse input strings to create new objects, methods used in MapReduce jobs, etc. 
+* 5. Provide custom implementation for CachedItemHelper (see STBLogHelper as an example). This is used to parse multiple CachedItems, provide info for the JDG searches, and generally help with usage of the corresponding CachedItem. These help keep the core system (smartdata-ejb) implementation independent.
+* 6. Be sure to add a unit test for the CachedItem subclass.
 
 ------------------
 
