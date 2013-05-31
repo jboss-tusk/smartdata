@@ -89,12 +89,13 @@ In order to compile the mrgm project on the server, that server must have MRGM i
 ------------------
 
 Steps to add support for a new use case (ie new data payload):
-* 1. Create a new module under smartdata-server to house the implementation classes for the new use case. Use the "cable" module as a basis.
-* 2. Update the smartdata-server's pom.xml to add a reference to the new module. 
-* 3. Update the smartdata-ear's pom.xml to add a dependency to your new module.
-* 4. Provide custom subclass for CachedItem (use STBLog as an example). This include the fields to be stored/indexed in JDG, methods to parse input strings to create new objects, methods used in MapReduce jobs, etc. 
-* 5. Provide custom implementation for CachedItemHelper (see STBLogHelper as an example). This is used to parse multiple CachedItems, provide info for the JDG searches, and generally help with usage of the corresponding CachedItem. These help keep the core system (smartdata-ejb) implementation independent.
-* 6. Be sure to add a unit test for the CachedItem subclass.
+
+1. Create a new module under smartdata-server to house the implementation classes for the new use case. Use the "cable" module as a basis.
+2. Update the smartdata-server's pom.xml to add a reference to the new module. 
+3. Update the smartdata-ear's pom.xml to add a dependency to your new module.
+4. Provide custom subclass for CachedItem (use STBLog as an example). This include the fields to be stored/indexed in JDG, methods to parse input strings to create new objects, methods used in MapReduce jobs, etc. 
+5. Provide custom implementation for CachedItemHelper (see STBLogHelper as an example). This is used to parse multiple CachedItems, provide info for the JDG searches, and generally help with usage of the corresponding CachedItem. These help keep the core system (smartdata-ejb) implementation independent.
+6. Be sure to add a unit test for the CachedItem subclass.
 
 ------------------
 
