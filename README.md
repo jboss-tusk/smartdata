@@ -151,7 +151,7 @@ Below is a list of several of the main classes, including the purpose they serve
 ####TODOs
 
 Below is a list of outstanding TODOs for this project, in order of priority as of 5/31/2013:
-* Make sure that we are using the latest Infinishap and hibernate-search libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
+* Make sure that we are using the latest Infinispan and hibernate-search (4.3.0-SNAPSHOT) libraries; the hibernate-search version currently used was built off of the hibernate-search project trunk
 * Test MapReduce with the new code organization.
 * Figure out why searches take so long when it's the first search (or first search in a while) whereas subsequent searches are faster
 * Test with larger maxEntries sizes (in ispn_index.xml) to see how many entries we can support (which will be different for different payload types)
