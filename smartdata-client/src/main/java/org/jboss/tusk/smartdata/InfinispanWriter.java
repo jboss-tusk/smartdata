@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -28,6 +29,7 @@ import org.jboss.ejb.client.EJBClientConfiguration;
 import org.jboss.ejb.client.EJBClientContext;
 import org.jboss.ejb.client.PropertiesBasedEJBClientConfiguration;
 import org.jboss.ejb.client.remoting.ConfigBasedEJBClientContextSelector;
+import org.jboss.tusk.smartdata.IngesterThreadJMS.MessageType;
 import org.jboss.tusk.smartdata.data.CachedItemHelper;
 import org.jboss.tusk.smartdata.data.CachedItemHelperFactory;
 import org.jboss.tusk.smartdata.ejb.RemoteIngester;
@@ -55,6 +57,8 @@ public class InfinispanWriter {
     private static List<Connection> jmsConnections = null;
 	private static List<Session> jmsSessions = null;
 	private static List<MessageProducer> jmsMessageProducers = null;
+	
+	private static MessageType messageType = MessageType.TEXT;
 
 	private static int totalCt = 0;
 	
@@ -230,6 +234,8 @@ public class InfinispanWriter {
 			cts[i] = 0;
 		}
 
+		CachedItemHelper helper = CachedItemHelperFactory.getInstance();
+		
 		for (int i = 0; i < bufferCt; i++) {
 			if (messagesStrBuffer[i] != null) {
 				int whichBatch = i / BATCH_SIZE;
@@ -241,15 +247,14 @@ public class InfinispanWriter {
 				//just pass that batch along by using a batch size of 1 (in which case we wouldn't want
 				//to add a pipe at the end of the item
 				if (BATCH_SIZE > 1) {
-//					System.out.println("Adding '|' to end of batch.");
-					currBatch.append("|");
+					currBatch.append(helper.getBatchSeparator());
 				}
 			}
 		}
 
 		List<IngesterThreadJMS> threads = new ArrayList<IngesterThreadJMS>(NUM_INGESTERS);
 		for (int i = 0; i < NUM_INGESTERS; i++) {
-			threads.add(new IngesterThreadJMS(jmsSessions.get(i), jmsMessageProducers.get(i), batches.get(i)));
+			threads.add(new IngesterThreadJMS(jmsSessions.get(i), jmsMessageProducers.get(i), batches.get(i), messageType));
 		}
 		
 //		System.out.println("About to start flush threads");
@@ -327,7 +332,7 @@ public class InfinispanWriter {
 
 	public static void main(String[] args) {
 		System.out.println("In main");
-		init(args.length > 1 ? args[1] : null);
+		init(args.length > 2 ? args[2] : null);
 
 		// see how many messages to write
 		int num = 1;
@@ -338,8 +343,16 @@ public class InfinispanWriter {
 				System.out.println("Couldn't convert '" + args[0]
 						+ "' to an integer; Using default of " + num);
 			}
+			if (args.length > 1) {
+			   try {
+			      messageType = MessageType.valueOf(args[1]);
+			   } catch (Exception e) {
+			      System.out.println("Couldn't convert '" + args[1]
+	                  + "' to MessageType; Using default of " + messageType);
+			   }
+			}
 		}
-		System.out.println("Writing " + num + " message(s).");
+		System.out.println("Writing " + num + " message(s) in " + messageType);
 
 		CachedItemHelper helper = CachedItemHelperFactory.getInstance();
 		
@@ -366,25 +379,44 @@ public class InfinispanWriter {
 }
 
 class IngesterThreadJMS extends Thread {
+   enum MessageType {
+      TEXT, BYTES
+   }
+   
 	private Session jmsSession;
 	private MessageProducer jmsMessageProducer;
 	private StringBuffer batch;
+	private MessageType type;
 
-	public IngesterThreadJMS(Session jmsSession, MessageProducer jmsMessageProducer, StringBuffer batch) {
+	public IngesterThreadJMS(Session jmsSession, MessageProducer jmsMessageProducer, StringBuffer batch, MessageType type) {
 		this.jmsSession = jmsSession;
 		this.jmsMessageProducer = jmsMessageProducer;
 		this.batch = batch;
+		this.type = type;
 	}
 
 	@Override
 	public void run() {
 		long start = System.currentTimeMillis();
 
-//		System.out.println("Sending message: " + this.batch.toString());
+		System.out.println("Sending message: " + this.batch.toString());
 		try {
-			TextMessage message = jmsSession.createTextMessage();
-			message.setText(this.batch.toString());
-			jmsMessageProducer.send(message);
+		   switch (type) {
+		   case TEXT: {
+		      TextMessage message = jmsSession.createTextMessage();
+	         message.setText(this.batch.toString());
+	         jmsMessageProducer.send(message);
+		      break;
+		   }
+		   case BYTES: {
+		      BytesMessage message = jmsSession.createBytesMessage();
+	         message.writeBytes(this.batch.toString().getBytes());
+	         jmsMessageProducer.send(message);
+		      break;
+		   }
+		   default:
+		      throw new IllegalArgumentException("unknown message type");
+		   }
 		} catch (JMSException ex) {
 			System.err.println("Caught JMSException sending ingester message: " + ex.getMessage());
 			ex.printStackTrace();
